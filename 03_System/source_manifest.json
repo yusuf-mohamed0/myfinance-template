@@ -1,6 +1,6 @@
 {
   "alg": "RSA-2048-SHA256-PKCS1v15",
-  "issued": "2026-09-27 20:34",
+  "issued": "2026-09-27 20:37",
   "key_id": "ae4d703381f8cee2",
   "files": {
     "04_Source/analyze_sms.py": "ae053796bc7532ebb03ac0e5fa90fa0e4fac8a1cf9c47f5d6f89ec352de68ef0",
@@ -14,12 +14,12 @@
     "04_Source/verify_system.py": "65c32f816a6d6d3939f3932692de14d4b6b112f42376b0aaff108df3d3f89839",
     "init_project.py": "161099545947222b5e2b766f9d7d1c078f1d32f08a76e32c89294b1e056440a1",
     "AGENTS.md": "47c53f99efad62c37623c97434b57099d999cfa6ce53825312bf03be6e5f5c6f",
-    "setup.sh": "6b4fe2933f66ed52805706c7e326346ecc3be3fc2e365216d5ca731831b3a823",
+    "setup.sh": "5dbeb9ff424bde0a38cb3a8811b5041ae474389c872d81de7292e804054aa7e6",
     "setup.bat": "e8ecd4a945a9878461fb8142203abb469e389003a64d132a6bbc85f77d87a228",
     ".gitignore": "1ccb5e3b0d477f2fffd7061572320bd1bea286d4302d4d7255aea95cbadeb471",
     ".gitattributes": "1f74c084da5cf18166fe338393ff3624e90ac9ea9dd9eeb851de71f6abf9858c",
     ".opencode/opencode.json": "e6d912b1f61ca2f4c5c98d9e3ed8fc13b7b2cc2f214924ef7d1ffeef7e1710d2",
     ".opencode/skills/myfinance/SKILL.md": "8a309d17b31dddf96077552b831a53e31329b7fafeb2951d2cd60feeef8522eb"
   },
-  "sig": "JPKXHq6Cb2vpkHmIsEuy5ymF60AMiVWG8vW3OCTjAa7RV7Kl8ng5ltIwAzHvgT+3c7a40RlsaSoQZP3dfBtAX7aNcSQuvoDDzGSE6nRfTNJ1y8C/UDPsIQp3W4AIwlpG7y/WbPhY6NzmLRK4Dho54o4ranBc0/1tBcGVfcrDGlgnFFhOwtOLtN1mwOwkw3ynYJWqfTs0y9QdG+2DRUPmlrfx4eV02A80PKr2lk7wbOIdlWXff3yOlb9/ihPTRX/XRGpf4L1mUU33yp3JVzQ932iD5wjwI3SnkRkfY6WhjqFOiSVZV8PCQexUaGg8R3Tm+8Qwc1pQXMp9uXhpWXWSQQ=="
+  "sig": "chUpr+qVlLb078P/Ibt/u76FuzgofYSyhP7EYyJqB7M55HynSGhVjDqYcyuYPMrVMakuU5gdPkBH8iepdeRPp8OEubB7yp/ga+i+D0mGoR7kLBLBL1K4O/Anqi1Z1k3dURMP5fNb2TxS6rhwGBcPD0Ytu2N7q3yEld5Bq+Ecwob2Thjt8K+pUb7GJ6XixwxmPq0G6lOUdilJKS/AUOB2Yl0GoXb874BY0zPVeNPjSzUFaNVd8IjP9RlQ6FMAAROaMkO62+5FT2AEcixbsx3o7ZzFoWK49ejQsNuli2jlhL0otfzrBgoGnHp5auof28uOBKtdrjWmWeob0emaApgeOQ=="
 }

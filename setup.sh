@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# MyFinance - one-command setup (macOS / Linux)
+# MyFinance - one-command setup (macOS / Linux / Git Bash on Windows)
 # Installs the Python packages, then runs the first-time wizard:
 #   ./setup.sh                                  (interactive)
 #   ./setup.sh --yes --name "You" --passcode x --income 10000 --no-repo
@@ -7,16 +7,18 @@ set -e
 cd "$(dirname "$0")"
 echo "=== MyFinance setup ==="
 
-if command -v python3 >/dev/null 2>&1; then
-  PY=python3
-elif command -v python >/dev/null 2>&1; then
-  PY=python
-else
+# Find a REAL Python 3 - rejects the Windows Store "python" stub, which
+# prints "Python was not found" and exits non-zero.
+PY=""
+for c in python3 python "py -3"; do
+  if $c -c "import sys" >/dev/null 2>&1; then PY=$c; break; fi
+done
+if [ -z "$PY" ]; then
   echo "[FAIL] Python 3 not found."
   echo "       Install: brew install python   (or https://www.python.org/downloads/)"
   exit 1
 fi
-echo "Python found: $($PY --version 2>&1)"
+echo "Python found: $($PY --version 2>&1 | head -n 1)"
 
 echo "Installing packages: openpyxl python-docx plotly"
 if ! $PY -m pip install --quiet openpyxl python-docx plotly; then
@@ -24,9 +26,17 @@ if ! $PY -m pip install --quiet openpyxl python-docx plotly; then
   if ! $PY -m pip install --quiet --user --break-system-packages openpyxl python-docx plotly; then
     # last resort: isolated virtualenv
     echo "pip blocked -> creating .venv"
-    $PY -m venv .venv
-    PY=".venv/bin/python"
-    $PY -m pip install --quiet openpyxl python-docx plotly
+    if $PY -m venv .venv; then
+      PY=".venv/bin/python"
+      if ! $PY -m pip install --quiet openpyxl python-docx plotly; then
+        echo "[FAIL] pip install failed inside .venv"
+        exit 1
+      fi
+    else
+      echo "[FAIL] pip blocked and .venv could not be created."
+      echo "       Fix Python: https://www.python.org/downloads/ then re-run ./setup.sh"
+      exit 1
+    fi
   fi
 fi
 
