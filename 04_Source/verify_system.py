@@ -11,8 +11,9 @@ Checks:
   4. Scripts compile (py_compile)
   5. SYSTEM LOCK: 03_System/source_manifest.json must carry a valid
      RSA-2048/SHA-256/PKCS#1 v1.5 signature issued ONLY by the system
-     owner's private key (never shipped), THEN every 04_Source/*.py +
-     init_project.py must match the SHA-256 recorded there.
+     owner's private key (never shipped), THEN every shipped system file
+     (04_Source/*.py, init_project.py, setup.sh/bat, AGENTS.md, .opencode
+     rules, .gitignore/.gitattributes) must match the SHA-256 recorded there.
      - edited file            -> "SYSTEM FILES MODIFIED"
      - locally re-hashed man. -> "SIGNATURE INVALID"
      - manifest w/o signature -> "MANIFEST NOT SIGNED"
@@ -98,6 +99,13 @@ FILES = [
     ("04_Source", "mfconfig.py"),
     ("05_Docs", "README.md"),
     ("init_project.py", None),
+    ("AGENTS.md", None),
+    ("setup.sh", None),
+    ("setup.bat", None),
+    (".opencode/opencode.json", None),
+    (".opencode/skills/myfinance/SKILL.md", None),
+    (".gitignore", None),
+    (".gitattributes", None),
 ]
 for folder, fn in FILES:
     if fn is None:
@@ -126,7 +134,7 @@ for sc in SCRIPTS:
 
 # ---------------------------------------------------------------- 5. SYSTEM LOCK
 # ---- SYSTEM LOCK -------------------------------------------------------
-# source_manifest.json = sha256 of every shipped script + an RSA-2048
+# source_manifest.json = sha256 of every shipped system file + an RSA-2048
 # signature over that manifest. The private key exists ONLY on the system
 # owner's machine (MyFinance/03_System/template_signing_key.pem) and is
 # never shipped, so nobody else can "bless" modified files - re-hashing

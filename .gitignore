@@ -1,5 +1,6 @@
 __pycache__/
 *.pyc
+.venv/
 
 # generated runtime data (each user produces their own)
 01_Data/*

@@ -353,6 +353,9 @@ def main():
     print("  3. Every Saturday: update 02_Reports/market_watch.json (prices),")
     print("     then build_web + publish_web.")
     print("  4. Do NOT edit 04_Source - verify_system.py fails if files change.")
+    print("  5. AI assistant: install OpenCode (https://opencode.ai) and run")
+    print("     'opencode' in this folder - it loads AGENTS.md + the myfinance")
+    print("     skill, and system files are read-only for the agent by rules.")
     return 0 if (ok and verified) else 1
 
 

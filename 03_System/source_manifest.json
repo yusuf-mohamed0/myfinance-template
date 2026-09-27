@@ -1,6 +1,6 @@
 {
   "alg": "RSA-2048-SHA256-PKCS1v15",
-  "issued": "2026-09-27 20:18",
+  "issued": "2026-09-27 20:34",
   "key_id": "ae4d703381f8cee2",
   "files": {
     "04_Source/analyze_sms.py": "ae053796bc7532ebb03ac0e5fa90fa0e4fac8a1cf9c47f5d6f89ec352de68ef0",
@@ -11,8 +11,15 @@
     "04_Source/mfconfig.py": "57caf4af82cc1793697d46ea35f22d8f094d7a00253598cb36989963274a52b5",
     "04_Source/plan_month.py": "2437fe09c204317f10305f6753149784b0fcc09829fce47cd19e3f11b57ae02a",
     "04_Source/publish_web.py": "7327410396ac2ba85c678d8f1e76de70da0f94aebfbf446d46b5f375c06f9acb",
-    "04_Source/verify_system.py": "c43c27aa6918a280fdebe2e038f5ec5d5763b1e20138ab6d02d3a2ca13b308e1",
-    "init_project.py": "5f8ca196e920f7157512a99f674be12d5e183836e46d822d6cc4531d38263ff8"
+    "04_Source/verify_system.py": "65c32f816a6d6d3939f3932692de14d4b6b112f42376b0aaff108df3d3f89839",
+    "init_project.py": "161099545947222b5e2b766f9d7d1c078f1d32f08a76e32c89294b1e056440a1",
+    "AGENTS.md": "47c53f99efad62c37623c97434b57099d999cfa6ce53825312bf03be6e5f5c6f",
+    "setup.sh": "6b4fe2933f66ed52805706c7e326346ecc3be3fc2e365216d5ca731831b3a823",
+    "setup.bat": "e8ecd4a945a9878461fb8142203abb469e389003a64d132a6bbc85f77d87a228",
+    ".gitignore": "1ccb5e3b0d477f2fffd7061572320bd1bea286d4302d4d7255aea95cbadeb471",
+    ".gitattributes": "1f74c084da5cf18166fe338393ff3624e90ac9ea9dd9eeb851de71f6abf9858c",
+    ".opencode/opencode.json": "e6d912b1f61ca2f4c5c98d9e3ed8fc13b7b2cc2f214924ef7d1ffeef7e1710d2",
+    ".opencode/skills/myfinance/SKILL.md": "8a309d17b31dddf96077552b831a53e31329b7fafeb2951d2cd60feeef8522eb"
   },
-  "sig": "R8d3zpERR6OIrdIRh9ukeyjvpUN+qzuQDkXT0yS54Zf/IByDsVeyYmWyAhid4Fieq+uVQB4Q6pP9qq7E60/zecuEPExJjIp2rnzoKhGNW4+3r0WAdliXhU8QUM5Z0yXAr63SslIZPgtqhE2z5jGBsplS5k2VBf0udMSVWIaZ3hq2+0sGgqLPL2E17EAWP9flKCeX3MwC0MEvR1QNO8Jo5Op0L6SWJaGZ5LDxtALnw1ooWrzqW0uNjRNIXGjEty/wrY2fOYfjhWvYLK7fSTq3cm4uSwVP/d+rbhKWY6w7nrzda7oINNimczYRZ6wA2HeBAjbzzzSjRKE1/IqgnAU1kA=="
+  "sig": "JPKXHq6Cb2vpkHmIsEuy5ymF60AMiVWG8vW3OCTjAa7RV7Kl8ng5ltIwAzHvgT+3c7a40RlsaSoQZP3dfBtAX7aNcSQuvoDDzGSE6nRfTNJ1y8C/UDPsIQp3W4AIwlpG7y/WbPhY6NzmLRK4Dho54o4ranBc0/1tBcGVfcrDGlgnFFhOwtOLtN1mwOwkw3ynYJWqfTs0y9QdG+2DRUPmlrfx4eV02A80PKr2lk7wbOIdlWXff3yOlb9/ihPTRX/XRGpf4L1mUU33yp3JVzQ932iD5wjwI3SnkRkfY6WhjqFOiSVZV8PCQexUaGg8R3Tm+8Qwc1pQXMp9uXhpWXWSQQ=="
 }

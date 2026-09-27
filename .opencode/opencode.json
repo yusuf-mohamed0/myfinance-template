@@ -1,0 +1,16 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "permissions": [
+    { "action": "edit", "resource": "*04_Source/*", "effect": "deny" },
+    { "action": "edit", "resource": "*init_project.py", "effect": "deny" },
+    { "action": "edit", "resource": "*03_System/source_manifest.json", "effect": "deny" },
+    { "action": "edit", "resource": "*AGENTS.md", "effect": "deny" },
+    { "action": "edit", "resource": "*.opencode/*", "effect": "deny" },
+    { "action": "edit", "resource": "*setup.sh", "effect": "deny" },
+    { "action": "edit", "resource": "*setup.bat", "effect": "deny" },
+    { "action": "edit", "resource": "*.gitignore", "effect": "deny" },
+    { "action": "edit", "resource": "*.gitattributes", "effect": "deny" },
+    { "action": "shell", "resource": "git push *", "effect": "ask" },
+    { "action": "shell", "resource": "gh *", "effect": "ask" }
+  ]
+}
