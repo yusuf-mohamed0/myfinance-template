@@ -95,16 +95,21 @@ python3 build_excel.py && python3 analyze_sms.py && python3 plan_month.py \
 
 ## أمان النظام (مهم)
 
-- `03_System/source_manifest.json` فيه بصمة SHA-256 لكل ملف في `04_Source/` + `init_project.py`.
-- `verify_system.py` بيفحص البصمات مع كل تشغيل — أي تعديل في ملفات السيستيم يظهر:
-  `SYSTEM FILES MODIFIED` والفحص بيفشل.
-- **ممنوع تعديل ملفات `04_Source/` أو `init_project.py` من غير إذن صاحب النظام.**
-  البيانات (config، SMS، تقارير، إكسل) تُعدَّل بحرية — القفل على الكود فقط.
-- لإعادة توليد البصمات بعد تعديل مُصرّح عليه:
+`03_System/source_manifest.json` مش مجرد قائمة بصمات — دي **موقّعة رقميًا**:
 
-```bash
-python3 -c "import hashlib,json,pathlib;b=pathlib.Path('..');f=sorted(list((b/'04_Source').glob('*.py')))+[b/'init_project.py'];(b/'03_System'/'source_manifest.json').write_text(json.dumps({str(p.relative_to(b)).replace(chr(92),'/'):hashlib.sha256(p.read_bytes().replace(b'\r\n',b'\n')).hexdigest() for p in f},indent=2))"
-```
+- كل ملف في `04_Source/` + `init_project.py` له بصمة SHA-256 (مع تطبيع نهايات السطور CRLF/LF).
+- الـmanifest كله موقّع بـ RSA-2048 / SHA-256 — **المفتاح الخاص موجود على جهاز صاحب النظام فقط ولا يُرسل مع القالب أبدًا**. يعني محدش يقدر يعمل بصص محلية جديدة وتعد "أصلية".
+- `verify_system.py` بيتحقق من التوقيع أول حاجة، وبعدها البصمات — تلات حالات فشل واضحة:
+
+| الرسالة | المعنى |
+|---|---|
+| `SYSTEM FILES MODIFIED` | حد عدّل ملف كود |
+| `SYSTEM MANIFEST SIGNATURE INVALID` | حد حاول يعمل manifest جديد من غير مفتاح صاحب النظام |
+| `MANIFEST NOT SIGNED` | الـmanifest اتشال أو اتعدّل |
+
+- **ممنوع تعديل ملفات `04_Source/` أو `init_project.py` من غير إذن صاحب النظام.** ولو الإذن ات granted، **صاحب النظام بس** اللي بيعيد إصدار manifest موقّع (أمر الإصدار ده مش جزء من القالب ومش متاح عندك أبدًا).
+- البيانات (`config.json`، SMS، تقارير، إكسل) تُعدَّل بحرية — القفل على الكود فقط.
+- ملاحظة صريحة: صاحب الجهاز الفعلي يقدر يمسح فحص `verify` كليًا (ده جهازه ومفيش قفل محلي يمنعه)، بس ساعتها الملفات مش هتتطابق مع النسخة المرجعية عند صاحب النظام — وأي مراجعة بتكشفها فورًا. الهدف العملي: **أي تغيير في السيستيم يوصل صاحب النظام ومتثبتش من غير إذنه** — وده مضمون، لأن "تعبئة" تعديل محلي ببصص شرعية محتاجة مفتاح مش موجود عند حد تاني.
 
 ---
 
@@ -122,7 +127,7 @@ python3 -c "import hashlib,json,pathlib;b=pathlib.Path('..');f=sorted(list((b/'0
 
 ```
 MyFinance_Template/
-├─ init_project.py          إعداد أول مرة (بيولد الـ manifest وقت التشغيل لو مفيش)
+├─ init_project.py          إعداد أول مرة (الإعداد + sample SMS + الأكواد)
 ├─ 01_Data/                 ملفات SMS الخام (أنت بتحطها هنا)
 ├─ 02_Reports/              ناتج التحليل + market_watch.json (أسعار أسبوعية)
 │   ├─ sms_analysis.json
@@ -131,7 +136,7 @@ MyFinance_Template/
 │   └─ charts/              رسوم plotly
 ├─ 03_System/
 │   ├─ config.json          إعداداتك (اسم/باسورد/دخل/مدينة/ريبو)
-│   ├─ source_manifest.json بصمات ملفات النظام
+│   ├─ source_manifest.json بصمات موقّعة لملفات النظام (توقيع المالك)
 │   └─ My_Financial_System.xlsx   مصنوع من build_excel
 ├─ 04_Source/               كود النظام (مقفول بالبصمات)
 │   ├─ mfconfig.py          تحميل الإعدادات المشتركة

@@ -9,10 +9,15 @@ Checks:
   2. config.json present and valid (03_System/config.json)
   3. Key files exist (SMS input, scripts, reports, site, docs)
   4. Scripts compile (py_compile)
-  5. SYSTEM LOCK: every 04_Source/*.py + init_project.py matches the
-     SHA-256 recorded in 03_System/source_manifest.json.
-     Any edit by anyone other than the system owner = FAIL
-     "SYSTEM FILES MODIFIED" (works even without git).
+  5. SYSTEM LOCK: 03_System/source_manifest.json must carry a valid
+     RSA-2048/SHA-256/PKCS#1 v1.5 signature issued ONLY by the system
+     owner's private key (never shipped), THEN every 04_Source/*.py +
+     init_project.py must match the SHA-256 recorded there.
+     - edited file            -> "SYSTEM FILES MODIFIED"
+     - locally re-hashed man. -> "SIGNATURE INVALID"
+     - manifest w/o signature -> "MANIFEST NOT SIGNED"
+     Any edit by anyone other than the system owner = FAIL (works even
+     without git; the private key never leaves the owner's machine).
   6. Data chain: sms_raw*.txt -> summary_<year>.json -> plan_YYYY-MM.xlsx
      (data checks SKIP when no summary yet / txns == 0)
   7. summary numbers self-consistent
@@ -24,6 +29,7 @@ Checks:
 Usage: python verify_system.py
 ASCII-only console output.
 """
+import base64
 import glob
 import hashlib
 import json
@@ -119,8 +125,41 @@ for sc in SCRIPTS:
         check("compile " + sc, False, str(e))
 
 # ---------------------------------------------------------------- 5. SYSTEM LOCK
-# sha256 of every shipped script; regenerate ONLY by the system owner
-# (yusuf) after an approved change - see README "System lock policy".
+# ---- SYSTEM LOCK -------------------------------------------------------
+# source_manifest.json = sha256 of every shipped script + an RSA-2048
+# signature over that manifest. The private key exists ONLY on the system
+# owner's machine (MyFinance/03_System/template_signing_key.pem) and is
+# never shipped, so nobody else can "bless" modified files - re-hashing
+# locally produces a manifest that fails this signature check.
+PUB_N = int(
+    "a95982191a10fa34f10b430e352b8cfed3da0e8710a93b6a5d8b0fa86ee27f11"
+    "998b12f080d0b397003ff54b3840e7b845d460b23841741d8387707c0cec8240"
+    "9a350a3ff1b8236d1fc6a8f7a32042f8d6cb32d82c38c1e3f8b5965bae38622d"
+    "3b5b1cc130af351572f1880302fee1daa3e60494f71704c1a0ee1a9250d5e0d3"
+    "f80109ab264688e532ee4d45fd02bec27a3048a43112227c0e9e40fa8314dbb2"
+    "b1a300463a5bb2d51e0a9cad76e146a7b03e99b131be5b1cf49eb801f39b73ad"
+    "b2f0478181309279f34d6109a7e5ed3f22bf5dc3936beb569876ec10373a7a90"
+    "129c5222fa8f277ca6c7f7fed74dc3cfeabaa98cba9feec1018ca2ee257db291",
+    16)
+PUB_E = 65537
+_SHA256_DER = bytes.fromhex("3031300d060960864801650304020105000420")
+
+
+def _owner_signature_ok(files_obj, sig_b64):
+    """RSA-2048 / SHA-256 / PKCS#1 v1.5 - stdlib only, no dependencies."""
+    sig = base64.b64decode(sig_b64, validate=True)
+    k = (PUB_N.bit_length() + 7) // 8
+    if len(sig) != k:
+        return False
+    em = pow(int.from_bytes(sig, "big"), PUB_E, PUB_N).to_bytes(k, "big")
+    canon = json.dumps(files_obj, sort_keys=True,
+                       separators=(",", ":")).encode("utf-8")
+    tail = b"\x00" + _SHA256_DER + hashlib.sha256(canon).digest()
+    # EM = 0x00 || 0x01 || PS || tail ; len(PS) = k - 2 - len(tail)
+    want = b"\x00\x01" + b"\xff" * (k - 2 - len(tail)) + tail
+    return em == want
+
+
 mf_path = os.path.join(BASE, "03_System", "source_manifest.json")
 if not os.path.isfile(mf_path):
     check("source_manifest.json exists", False,
@@ -128,22 +167,36 @@ if not os.path.isfile(mf_path):
 else:
     try:
         manifest = json.load(open(mf_path, encoding="utf-8"))
-        expected = manifest.get("files", manifest)
-        tampered = []
-        missing = []
-        for rel, want in sorted(expected.items()):
-            p = os.path.join(BASE, rel.replace("/", os.sep))
-            if not os.path.isfile(p):
-                missing.append(rel)
-                continue
-            # normalize line endings so CRLF checkouts (Windows git) are
-            # not flagged as tampering - content, not EOL, is what we lock
-            raw = open(p, "rb").read().replace(b"\r\n", b"\n")
-            got = hashlib.sha256(raw).hexdigest()
-            if got != want:
-                tampered.append(rel)
-        check("SYSTEM FILES UNMODIFIED (manifest)", not tampered and not missing,
-              "SYSTEM FILES MODIFIED: " + ", ".join(tampered + missing))
+        if not (isinstance(manifest, dict) and "files" in manifest
+                and "sig" in manifest):
+            check("manifest signed by system owner", False,
+                  "MANIFEST NOT SIGNED - only the system owner can issue "
+                  "a manifest; local regeneration is rejected")
+        else:
+            expected = manifest["files"]
+            try:
+                sig_ok = _owner_signature_ok(expected, manifest["sig"])
+                sig_detail = ("SYSTEM MANIFEST SIGNATURE INVALID - manifest "
+                              "was regenerated without the owner's key")
+            except Exception as e:
+                sig_ok = False
+                sig_detail = "signature check error: " + str(e)
+            check("manifest signed by system owner", sig_ok, sig_detail)
+            tampered = []
+            missing = []
+            for rel, want in sorted(expected.items()):
+                p = os.path.join(BASE, rel.replace("/", os.sep))
+                if not os.path.isfile(p):
+                    missing.append(rel)
+                    continue
+                # normalize line endings so CRLF checkouts (Windows git) are
+                # not flagged as tampering - content, not EOL, is what we lock
+                raw = open(p, "rb").read().replace(b"\r\n", b"\n")
+                got = hashlib.sha256(raw).hexdigest()
+                if got != want:
+                    tampered.append(rel)
+            check("SYSTEM FILES UNMODIFIED (manifest)", not tampered and not missing,
+                  "SYSTEM FILES MODIFIED: " + ", ".join(tampered + missing))
     except Exception as e:
         check("source_manifest.json reads", False, str(e))
 
