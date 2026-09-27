@@ -136,7 +136,10 @@ else:
             if not os.path.isfile(p):
                 missing.append(rel)
                 continue
-            got = hashlib.sha256(open(p, "rb").read()).hexdigest()
+            # normalize line endings so CRLF checkouts (Windows git) are
+            # not flagged as tampering - content, not EOL, is what we lock
+            raw = open(p, "rb").read().replace(b"\r\n", b"\n")
+            got = hashlib.sha256(raw).hexdigest()
             if got != want:
                 tampered.append(rel)
         check("SYSTEM FILES UNMODIFIED (manifest)", not tampered and not missing,

@@ -103,7 +103,7 @@ python3 build_excel.py && python3 analyze_sms.py && python3 plan_month.py \
 - لإعادة توليد البصمات بعد تعديل مُصرّح عليه:
 
 ```bash
-python3 -c "import hashlib,json,pathlib;b=pathlib.Path('..');f=sorted(list((b/'04_Source').glob('*.py')))+[b/'init_project.py'];(b/'03_System'/'source_manifest.json').write_text(json.dumps({str(p.relative_to(b)).replace(chr(92),'/'):hashlib.sha256(p.read_bytes()).hexdigest() for p in f},indent=2))"
+python3 -c "import hashlib,json,pathlib;b=pathlib.Path('..');f=sorted(list((b/'04_Source').glob('*.py')))+[b/'init_project.py'];(b/'03_System'/'source_manifest.json').write_text(json.dumps({str(p.relative_to(b)).replace(chr(92),'/'):hashlib.sha256(p.read_bytes().replace(b'\r\n',b'\n')).hexdigest() for p in f},indent=2))"
 ```
 
 ---
